@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,6 +42,7 @@ func postItem(c *gin.Context) {
 
 	// Call BindJSON to bind the received JSON to newItem.
 	if err := c.BindJSON(&newItem); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
 		return
 	}
 
@@ -92,27 +92,35 @@ func deleteItem(c *gin.Context) {
  */
 func patchItem(c *gin.Context) {
 	id := c.Param("id")
-	param := strings.ToLower(c.Param("param"))
-	newValue := c.Param("newValue")
+
+	var updatedItem Item
+
+	// Call BindJSON to bind the received JSON to newItem.
+	if err := c.BindJSON(&updatedItem); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
+		return
+	}
 
 	// Loops over the list of items to find an item with a matching ID value.
-	for index, i := range items {
-		if i.ID == id {
-			// Patches based on param and newValue.
-			switch param {
-			case "name":
-				i.Name = newValue
-			case "desc":
-				i.Desc = newValue
-			case "content":
-				i.Content = newValue
-			default:
-				c.IndentedJSON(http.StatusNotFound, gin.H{"message": "param not found"})
-				return
+	for index, _ := range items {
+		if items[index].ID == id {
+			if updatedItem.ID != "" {
+				items[index].ID = updatedItem.ID
 			}
 
-			items[index] = i
-			c.IndentedJSON(http.StatusOK, i)
+			if updatedItem.Name != "" {
+				items[index].Name = updatedItem.Name
+			}
+
+			if updatedItem.Desc != "" {
+				items[index].Desc = updatedItem.Desc
+			}
+
+			if updatedItem.Content != "" {
+				items[index].Content = updatedItem.Content
+			}
+
+			c.IndentedJSON(http.StatusOK, items[index])
 			return
 		}
 	}
@@ -151,7 +159,7 @@ func startServer() {
 	router.POST("/", homePagePOST)
 	router.POST("/items", postItem)
 	router.DELETE("items/:id", deleteItem)
-	router.PATCH("items/:id/:param/:newValue", patchItem)
+	router.PATCH("items/:id", patchItem)
 
 	router.Run()
 }
