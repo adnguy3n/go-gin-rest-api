@@ -1,50 +1,52 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 /*
  * Item data structure.
  */
-type Item struct {
+type item struct {
 	Name    string `json:"Name"`
 	Desc    string `json:"desc"`
 	Content string `json:"content"`
 }
 
 /*
- * Array of Items.
+ * Slice of items to record item data
  */
-type Items []Item
+var items = []item{
+	{Name: "Test Item", Desc: "Test Item Description", Content: "Wah!"},
+}
 
 /*
  * All items endpoint. Returns a json response of all items when hit.
  */
-func allItems(w http.ResponseWriter, r *http.Request) {
-	items := Items{
-		Item{Name: "Test Item", Desc: "Test Item Description", Content: "Wah!"},
-	}
-
+func allItems(c *gin.Context) {
 	fmt.Println("Hit all items endpoint")
-	json.NewEncoder(w).Encode(items)
+	c.IndentedJSON(http.StatusOK, items)
 }
 
 /*
  * HomePage endpoint. Prints out a message when hit.
  */
-func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi, this is Home")
+func homePage(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "Hi, this is home",
+	})
 }
 
 /*
  * Main function
  */
 func main() {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/items", allItems)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	router := gin.Default()
+	router.GET("/", homePage)
+	router.GET("/items", allItems)
+
+	router.Run()
 }
