@@ -48,6 +48,23 @@ func postItem(c *gin.Context) {
 }
 
 /*
+ * Gets the item whose ID value matches the id
+ */
+func getItem(c *gin.Context) {
+	id := c.Param("id")
+
+	// Loops over the list of items to find an item with a matching ID value.
+	for _, i := range items {
+		if i.ID == id {
+			c.IndentedJSON(http.StatusOK, i)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+}
+
+/*
  * HomePage endpoint. Prints out a message when hit.
  */
 func homePage(c *gin.Context) {
@@ -72,6 +89,7 @@ func startServer() {
 	router := gin.Default()
 	router.GET("/", homePage)
 	router.GET("/items", allItems)
+	router.GET("/items/:id", getItem)
 	router.POST("/", homePagePOST)
 	router.POST("/items", postItem)
 	router.Run()
