@@ -8,30 +8,11 @@ import (
 )
 
 /*
- * Item data structure.
- */
-type Item struct {
-	ID      string `json:"id"`
-	Name    string `json:"Name"`
-	Desc    string `json:"desc"`
-	Content string `json:"content"`
-}
-
-/*
- * Slice of items to record item data
- */
-var items = []Item{
-	{ID: "0", Name: "Test Item 0", Desc: "Test Item Description", Content: "Wah!"},
-	{ID: "1", Name: "Test Item 1", Desc: "Test Item Description", Content: "Guh!"},
-	{ID: "2", Name: "Test Item 2", Desc: "Test Item Description", Content: "Peko!"},
-}
-
-/*
- * All items endpoint. Returns a json response of all items when hit.
+ * All Items endpoint. Returns a json response of all Items when hit.
  */
 func allItems(c *gin.Context) {
-	fmt.Println("Hit all items endpoint")
-	c.IndentedJSON(http.StatusOK, items)
+	fmt.Println("Hit all Items endpoint")
+	c.IndentedJSON(http.StatusOK, Items)
 }
 
 /*
@@ -46,7 +27,7 @@ func postItem(c *gin.Context) {
 		return
 	}
 
-	items = append(items, newItem)
+	Items = append(Items, newItem)
 	c.IndentedJSON(http.StatusCreated, newItem)
 }
 
@@ -56,8 +37,8 @@ func postItem(c *gin.Context) {
 func getItem(c *gin.Context) {
 	id := c.Param("id")
 
-	// Loops over the list of items to find an item with a matching ID value.
-	for _, i := range items {
+	// Loops over the list of Items to find an item with a matching ID value.
+	for _, i := range Items {
 		if i.ID == id {
 			c.IndentedJSON(http.StatusOK, i)
 			return
@@ -73,11 +54,11 @@ func getItem(c *gin.Context) {
 func deleteItem(c *gin.Context) {
 	id := c.Param("id")
 
-	// Loops over the list of items to find an item with a matching ID value.
-	for index, i := range items {
+	// Loops over the list of Items to find an item with a matching ID value.
+	for index, i := range Items {
 		if i.ID == id {
 			// Delete Item from slice
-			items = append(items[:index], items[index+1:]...)
+			Items = append(Items[:index], Items[index+1:]...)
 
 			c.IndentedJSON(http.StatusOK, i)
 			return
@@ -101,26 +82,26 @@ func patchItem(c *gin.Context) {
 		return
 	}
 
-	// Loops over the list of items to find an item with a matching ID value.
-	for index := range items {
-		if items[index].ID == id {
+	// Loops over the list of Items to find an item with a matching ID value.
+	for index := range Items {
+		if Items[index].ID == id {
 			if updatedItem.ID != "" {
-				items[index].ID = updatedItem.ID
+				Items[index].ID = updatedItem.ID
 			}
 
 			if updatedItem.Name != "" {
-				items[index].Name = updatedItem.Name
+				Items[index].Name = updatedItem.Name
 			}
 
 			if updatedItem.Desc != "" {
-				items[index].Desc = updatedItem.Desc
+				Items[index].Desc = updatedItem.Desc
 			}
 
 			if updatedItem.Content != "" {
-				items[index].Content = updatedItem.Content
+				Items[index].Content = updatedItem.Content
 			}
 
-			c.IndentedJSON(http.StatusOK, items[index])
+			c.IndentedJSON(http.StatusOK, Items[index])
 			return
 		}
 	}
@@ -142,11 +123,11 @@ func putItem(c *gin.Context) {
 		return
 	}
 
-	// Loops over the list of items to find an item with a matching ID value.
-	for index := range items {
-		if items[index].ID == id {
-			items[index] = updatedItem
-			c.IndentedJSON(http.StatusOK, items[index])
+	// Loops over the list of Items to find an item with a matching ID value.
+	for index := range Items {
+		if Items[index].ID == id {
+			Items[index] = updatedItem
+			c.IndentedJSON(http.StatusOK, Items[index])
 			return
 		}
 	}
@@ -170,30 +151,4 @@ func homePagePOST(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Hi, this is POST home",
 	})
-}
-
-/*
- * Start Server.
- */
-func startServer() {
-	router := gin.Default()
-
-	// Methods
-	router.GET("/", homePage)
-	router.GET("/items", allItems)
-	router.GET("/items/:id", getItem)
-	router.POST("/", homePagePOST)
-	router.POST("/items", postItem)
-	router.DELETE("items/:id", deleteItem)
-	router.PATCH("items/:id", patchItem)
-	router.PUT("items/:id", putItem)
-
-	router.Run()
-}
-
-/*
- * Main function.
- */
-func main() {
-	startServer()
 }
