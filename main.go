@@ -102,7 +102,7 @@ func patchItem(c *gin.Context) {
 	}
 
 	// Loops over the list of items to find an item with a matching ID value.
-	for index, _ := range items {
+	for index := range items {
 		if items[index].ID == id {
 			if updatedItem.ID != "" {
 				items[index].ID = updatedItem.ID
@@ -120,6 +120,32 @@ func patchItem(c *gin.Context) {
 				items[index].Content = updatedItem.Content
 			}
 
+			c.IndentedJSON(http.StatusOK, items[index])
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
+}
+
+/*
+ * PUT the item whose ID value matches the id given.
+ */
+func putItem(c *gin.Context) {
+	id := c.Param("id")
+
+	var updatedItem Item
+
+	// Call BindJSON to bind the received JSON to newItem.
+	if err := c.BindJSON(&updatedItem); err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
+		return
+	}
+
+	// Loops over the list of items to find an item with a matching ID value.
+	for index := range items {
+		if items[index].ID == id {
+			items[index] = updatedItem
 			c.IndentedJSON(http.StatusOK, items[index])
 			return
 		}
@@ -160,6 +186,7 @@ func startServer() {
 	router.POST("/items", postItem)
 	router.DELETE("items/:id", deleteItem)
 	router.PATCH("items/:id", patchItem)
+	router.PUT("items/:id", putItem)
 
 	router.Run()
 }
