@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +11,7 @@ import (
 /*
  * Item data structure.
  */
-type item struct {
+type Item struct {
 	ID      string `json:"id"`
 	Name    string `json:"Name"`
 	Desc    string `json:"desc"`
@@ -20,8 +21,10 @@ type item struct {
 /*
  * Slice of items to record item data
  */
-var items = []item{
-	{ID: "0", Name: "Test Item", Desc: "Test Item Description", Content: "Wah!"},
+var items = []Item{
+	{ID: "0", Name: "Test Item 0", Desc: "Test Item Description", Content: "Wah!"},
+	{ID: "1", Name: "Test Item 1", Desc: "Test Item Description", Content: "Guh!"},
+	{ID: "2", Name: "Test Item 2", Desc: "Test Item Description", Content: "Peko!"},
 }
 
 /*
@@ -36,7 +39,7 @@ func allItems(c *gin.Context) {
  * Appends an item from JSON received in the request body.
  */
 func postItem(c *gin.Context) {
-	var newItem item
+	var newItem Item
 
 	// Call BindJSON to bind the received JSON to newItem.
 	if err := c.BindJSON(&newItem); err != nil {
@@ -48,7 +51,7 @@ func postItem(c *gin.Context) {
 }
 
 /*
- * Gets the item whose ID value matches the id
+ * Gets the item whose ID value matches the id given.
  */
 func getItem(c *gin.Context) {
 	id := c.Param("id")
@@ -61,7 +64,60 @@ func getItem(c *gin.Context) {
 		}
 	}
 
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
+}
+
+/*
+ * Deletes the item whose ID value matches the id given.
+ */
+func deleteItem(c *gin.Context) {
+	id := c.Param("id")
+
+	// Loops over the list of items to find an item with a matching ID value.
+	for index, i := range items {
+		if i.ID == id {
+			// Delete Item from slice
+			items = append(items[:index], items[index+1:]...)
+
+			c.IndentedJSON(http.StatusOK, i)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
+}
+
+/*
+ * Patches the item whose ID value matches the id given.
+ */
+func patchItem(c *gin.Context) {
+	id := c.Param("id")
+	param := strings.ToLower(c.Param("param"))
+	newValue := c.Param("newValue")
+
+	// Loops over the list of items to find an item with a matching ID value.
+	for index, i := range items {
+		if i.ID == id {
+			// Patches based on param and newValue.
+			switch param {
+			case "name":
+				i.Name = newValue
+			case "desc":
+				i.Desc = newValue
+			case "content":
+				i.Content = newValue
+			default:
+				c.IndentedJSON(http.StatusNotFound, gin.H{"message": "param not found"})
+				return
+			}
+
+			items[index] = i
+			c.IndentedJSON(http.StatusOK, i)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
 }
 
 /*
@@ -87,11 +143,16 @@ func homePagePOST(c *gin.Context) {
  */
 func startServer() {
 	router := gin.Default()
+
+	// Methods
 	router.GET("/", homePage)
 	router.GET("/items", allItems)
 	router.GET("/items/:id", getItem)
 	router.POST("/", homePagePOST)
 	router.POST("/items", postItem)
+	router.DELETE("items/:id", deleteItem)
+	router.PATCH("items/:id/:param/:newValue", patchItem)
+
 	router.Run()
 }
 
