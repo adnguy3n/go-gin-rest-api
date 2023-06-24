@@ -1,25 +1,26 @@
-package main
+package controllers
 
 import (
 	"fmt"
+	"go-gin-rest-api/src/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 /*
- * All Items endpoint. Returns a json response of all Items when hit.
+ * All items endpoint. Returns a json response of all items when hit.
  */
-func allItems(c *gin.Context) {
+func AllItems(c *gin.Context) {
 	fmt.Println("Hit all Items endpoint")
-	c.IndentedJSON(http.StatusOK, Items)
+	c.IndentedJSON(http.StatusOK, models.Items)
 }
 
 /*
  * Appends an item from JSON received in the request body.
  */
-func postItem(c *gin.Context) {
-	var newItem Item
+func PostItem(c *gin.Context) {
+	var newItem models.Item
 
 	// Call BindJSON to bind the received JSON to newItem.
 	if err := c.BindJSON(&newItem); err != nil {
@@ -27,18 +28,18 @@ func postItem(c *gin.Context) {
 		return
 	}
 
-	Items = append(Items, newItem)
+	models.Items = append(models.Items, newItem)
 	c.IndentedJSON(http.StatusCreated, newItem)
 }
 
 /*
  * Gets the item whose ID value matches the id given.
  */
-func getItem(c *gin.Context) {
+func GetItem(c *gin.Context) {
 	id := c.Param("id")
 
-	// Loops over the list of Items to find an item with a matching ID value.
-	for _, i := range Items {
+	// Loops over the list of items to find an item with a matching ID value.
+	for _, i := range models.Items {
 		if i.ID == id {
 			c.IndentedJSON(http.StatusOK, i)
 			return
@@ -51,14 +52,14 @@ func getItem(c *gin.Context) {
 /*
  * Deletes the item whose ID value matches the id given.
  */
-func deleteItem(c *gin.Context) {
+func DeleteItem(c *gin.Context) {
 	id := c.Param("id")
 
-	// Loops over the list of Items to find an item with a matching ID value.
-	for index, i := range Items {
+	// Loops over the list of items to find an item with a matching ID value.
+	for index, i := range models.Items {
 		if i.ID == id {
 			// Delete Item from slice
-			Items = append(Items[:index], Items[index+1:]...)
+			models.Items = append(models.Items[:index], models.Items[index+1:]...)
 
 			c.IndentedJSON(http.StatusOK, i)
 			return
@@ -71,10 +72,10 @@ func deleteItem(c *gin.Context) {
 /*
  * Patches the item whose ID value matches the id given.
  */
-func patchItem(c *gin.Context) {
+func PatchItem(c *gin.Context) {
 	id := c.Param("id")
 
-	var updatedItem Item
+	var updatedItem models.Item
 
 	// Call BindJSON to bind the received JSON to newItem.
 	if err := c.BindJSON(&updatedItem); err != nil {
@@ -82,26 +83,26 @@ func patchItem(c *gin.Context) {
 		return
 	}
 
-	// Loops over the list of Items to find an item with a matching ID value.
-	for index := range Items {
-		if Items[index].ID == id {
+	// Loops over the list of items to find an item with a matching ID value.
+	for index := range models.Items {
+		if models.Items[index].ID == id {
 			if updatedItem.ID != "" {
-				Items[index].ID = updatedItem.ID
+				models.Items[index].ID = updatedItem.ID
 			}
 
 			if updatedItem.Name != "" {
-				Items[index].Name = updatedItem.Name
+				models.Items[index].Name = updatedItem.Name
 			}
 
 			if updatedItem.Desc != "" {
-				Items[index].Desc = updatedItem.Desc
+				models.Items[index].Desc = updatedItem.Desc
 			}
 
 			if updatedItem.Content != "" {
-				Items[index].Content = updatedItem.Content
+				models.Items[index].Content = updatedItem.Content
 			}
 
-			c.IndentedJSON(http.StatusOK, Items[index])
+			c.IndentedJSON(http.StatusOK, models.Items[index])
 			return
 		}
 	}
@@ -112,10 +113,10 @@ func patchItem(c *gin.Context) {
 /*
  * PUT the item whose ID value matches the id given.
  */
-func putItem(c *gin.Context) {
+func PutItem(c *gin.Context) {
 	id := c.Param("id")
 
-	var updatedItem Item
+	var updatedItem models.Item
 
 	// Call BindJSON to bind the received JSON to newItem.
 	if err := c.BindJSON(&updatedItem); err != nil {
@@ -123,11 +124,11 @@ func putItem(c *gin.Context) {
 		return
 	}
 
-	// Loops over the list of Items to find an item with a matching ID value.
-	for index := range Items {
-		if Items[index].ID == id {
-			Items[index] = updatedItem
-			c.IndentedJSON(http.StatusOK, Items[index])
+	// Loops over the list of items to find an item with a matching ID value.
+	for index := range models.Items {
+		if models.Items[index].ID == id {
+			models.Items[index] = updatedItem
+			c.IndentedJSON(http.StatusOK, models.Items[index])
 			return
 		}
 	}
@@ -138,7 +139,7 @@ func putItem(c *gin.Context) {
 /*
  * HomePage endpoint. Prints out a message when hit.
  */
-func homePage(c *gin.Context) {
+func HomePage(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Hi, this is home",
 	})
@@ -147,7 +148,7 @@ func homePage(c *gin.Context) {
 /*
  * HomePage endpoint for POST. Only hits if a POST request is made instead of a GET request.
  */
-func homePagePOST(c *gin.Context) {
+func HomePagePOST(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Hi, this is POST home",
 	})
