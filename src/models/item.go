@@ -11,7 +11,7 @@ type Item struct {
 }
 
 /*
- * Slice of items to record item data
+ * Slice of items to record item data.
  */
 var Items = []Item{
 	{ID: "0", Name: "Test Item 0", Desc: "Test Item Description", Content: "Wah!"},
