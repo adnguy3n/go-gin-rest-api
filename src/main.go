@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-gin-rest-api/src/controllers"
+	"go-gin-rest-api/src/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,12 +12,23 @@ import (
  */
 func startServer() {
 	router := gin.Default()
+	models.ConnectDatabase()
 
-	// Methods
+	// Methods for HomePage endpoints.
 	router.GET("/", controllers.HomePage)
+	router.POST("/", controllers.HomePagePOST)
+
+	// Methods for D&D Characters. Uses GORM and SQLite.
+	router.GET("/characters", controllers.AllCharacters)
+	router.GET("/characters/:id", controllers.GetCharacter)
+	router.POST("/characters", controllers.PostCharacter)
+	router.DELETE("/characters/:id", controllers.DeleteCharacter)
+	router.PATCH("/characters/:id", controllers.PatchCharacter)
+	router.PUT("/characters/:id", controllers.PutCharacter)
+
+	// Methods for Item. Uses a slice.
 	router.GET("/items", controllers.AllItems)
 	router.GET("/items/:id", controllers.GetItem)
-	router.POST("/", controllers.HomePagePOST)
 	router.POST("/items", controllers.PostItem)
 	router.DELETE("items/:id", controllers.DeleteItem)
 	router.PATCH("items/:id", controllers.PatchItem)
