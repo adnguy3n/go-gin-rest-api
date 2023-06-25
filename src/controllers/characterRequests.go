@@ -56,12 +56,18 @@ func PostCharacter(c *gin.Context) {
 		return
 	}
 
-	// Create Character.
+	// Stores the new character's Name, Race, Class, and Level in character.
 	character := models.Character{
 		Name:  newCharacter.Name,
 		Race:  newCharacter.Race,
 		Class: newCharacter.Race,
 		Level: newCharacter.Level}
+
+	// The max level for D&D character is 20.
+	if character.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
+		return
+	}
 
 	models.Database.Create(&character)
 
@@ -107,6 +113,12 @@ func PatchCharacter(c *gin.Context) {
 		return
 	}
 
+	// The max level for D&D character is 20.
+	if updatedCharacter.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
+		return
+	}
+
 	models.Database.Model(&character).Updates(updatedCharacter)
 	c.IndentedJSON(http.StatusOK, character)
 }
@@ -129,6 +141,12 @@ func PutCharacter(c *gin.Context) {
 	// Call BindJSON to bind the received JSON to updatedCharacter.
 	if err := c.BindJSON(&updatedCharacter); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
+		return
+	}
+
+	// The max level for D&D character is 20.
+	if updatedCharacter.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
 		return
 	}
 
