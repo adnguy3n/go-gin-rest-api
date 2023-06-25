@@ -9,6 +9,7 @@ import (
 
 /*
  * Struct for a D&D character.
+ * A unique ID is not needed as it will be automatically generated.
  */
 type inputCharacter struct {
 	Name  string `json:"Name"`
@@ -31,14 +32,15 @@ func AllCharacters(c *gin.Context) {
  */
 func GetCharacter(c *gin.Context) {
 	var character models.Character
-	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 
+	// Finds the character based on their unique ID.
+	// Gives an error if no character with that ID exists.
+	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
 	}
 
-	models.Database.Find(&character)
 	c.IndentedJSON(http.StatusOK, character)
 }
 
@@ -48,7 +50,7 @@ func GetCharacter(c *gin.Context) {
 func PostCharacter(c *gin.Context) {
 	var newCharacter inputCharacter
 
-	// Call BindJSON to bind the received JSON to newItem.
+	// Call BindJSON to bind the received JSON to newCharacter.
 	if err := c.BindJSON(&newCharacter); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -71,8 +73,10 @@ func PostCharacter(c *gin.Context) {
  */
 func DeleteCharacter(c *gin.Context) {
 	var character models.Character
-	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 
+	// Finds the character based on their unique ID.
+	// Gives an error if no character with that ID exists.
+	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
@@ -87,16 +91,17 @@ func DeleteCharacter(c *gin.Context) {
  */
 func PatchCharacter(c *gin.Context) {
 	var character models.Character
-	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
+	var updatedCharacter inputCharacter
 
+	// Finds the character based on their unique ID.
+	// Gives an error if no character with that ID exists.
+	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
 	}
 
-	var updatedCharacter inputCharacter
-
-	// Call BindJSON to bind the received JSON to newItem.
+	// Call BindJSON to bind the received JSON to updatedCharacter.
 	if err := c.BindJSON(&updatedCharacter); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
 		return
@@ -111,16 +116,17 @@ func PatchCharacter(c *gin.Context) {
  */
 func PutCharacter(c *gin.Context) {
 	var character models.Character
-	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
+	var updatedCharacter models.Character
 
+	// Finds the character based on their unique ID.
+	// Gives an error if no character with that ID exists.
+	err := models.Database.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
 	}
 
-	var updatedCharacter models.Character
-
-	// Call BindJSON to bind the received JSON to newItem.
+	// Call BindJSON to bind the received JSON to updatedCharacter.
 	if err := c.BindJSON(&updatedCharacter); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
 		return
