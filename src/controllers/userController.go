@@ -40,14 +40,3 @@ func RegisterUser(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, gin.H{"userId": user.ID, "email": user.Email, "username": user.Username})
 }
-
-/*
- * Gets all users. For testing purposes.
- */
-/*
-func AllUsers(c *gin.Context) {
-	var users []models.User
-	databases.UserDB.Find(&users)
-	c.IndentedJSON(http.StatusOK, users)
-}
-*/
