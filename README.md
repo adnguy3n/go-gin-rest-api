@@ -1,6 +1,6 @@
 # go-gin-rest-api
 
-Just a basic RESTful CRUD API I wrote to learn Golang with.
+Just a basic RESTful CRUD API written as a learning excercise with Golang and Docker.
 
 ## Running
 
