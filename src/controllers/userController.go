@@ -80,6 +80,13 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
+	// Hash the password.
+	if err := updatedUser.HashPassword(updatedUser.Password); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+
 	databases.UserDB.Model(&user).Updates(updatedUser)
 	c.IndentedJSON(http.StatusOK, gin.H{"Message": "User Info Updated."})
 }
