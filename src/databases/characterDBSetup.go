@@ -1,6 +1,8 @@
-package models
+package databases
 
 import (
+	"go-gin-rest-api/src/models"
+
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
@@ -22,7 +24,7 @@ func ConnectDatabase() {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&Character{})
+	err = database.AutoMigrate(&models.Character{})
 	if err != nil {
 		return
 	}

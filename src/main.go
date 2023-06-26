@@ -2,7 +2,7 @@ package main
 
 import (
 	"go-gin-rest-api/src/controllers"
-	"go-gin-rest-api/src/models"
+	"go-gin-rest-api/src/databases"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +12,7 @@ import (
  */
 func startServer() {
 	router := gin.Default()
-	models.ConnectDatabase()
+	databases.ConnectDatabase()
 
 	// Methods for HomePage endpoints.
 	router.GET("/", controllers.HomePage)

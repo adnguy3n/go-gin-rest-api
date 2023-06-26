@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"go-gin-rest-api/src/databases"
 	"go-gin-rest-api/src/models"
 	"net/http"
 
@@ -23,7 +24,7 @@ type inputCharacter struct {
  */
 func AllCharacters(c *gin.Context) {
 	var characters []models.Character
-	models.CharacterDB.Find(&characters)
+	databases.CharacterDB.Find(&characters)
 	c.IndentedJSON(http.StatusOK, characters)
 }
 
@@ -35,7 +36,7 @@ func GetCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := models.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
@@ -69,7 +70,7 @@ func PostCharacter(c *gin.Context) {
 		return
 	}
 
-	models.CharacterDB.Create(&character)
+	databases.CharacterDB.Create(&character)
 
 	c.IndentedJSON(http.StatusCreated, character)
 }
@@ -82,13 +83,13 @@ func DeleteCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := models.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
 	}
 
-	models.CharacterDB.Delete(&character)
+	databases.CharacterDB.Delete(&character)
 	c.JSON(http.StatusNotFound, gin.H{"Message": "Character deleted."})
 }
 
@@ -101,7 +102,7 @@ func PatchCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := models.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
@@ -119,7 +120,7 @@ func PatchCharacter(c *gin.Context) {
 		return
 	}
 
-	models.CharacterDB.Model(&character).Updates(updatedCharacter)
+	databases.CharacterDB.Model(&character).Updates(updatedCharacter)
 	c.IndentedJSON(http.StatusOK, character)
 }
 
@@ -132,7 +133,7 @@ func PutCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := models.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
 		return
@@ -150,6 +151,6 @@ func PutCharacter(c *gin.Context) {
 		return
 	}
 
-	models.CharacterDB.Model(&character).Updates(updatedCharacter)
+	databases.CharacterDB.Model(&character).Updates(updatedCharacter)
 	c.IndentedJSON(http.StatusOK, character)
 }
