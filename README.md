@@ -4,7 +4,7 @@ Just a basic RESTful CRUD API written as a learning excercise with Golang and Do
 
 ## Running
 
-To run, after pulling the repository, run Docker compose build followed by Docker compose up.
+To run, after pulling the repository, run docker compose build followed by docker compose up.
 
 ## Usage
 
