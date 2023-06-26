@@ -42,20 +42,46 @@ func RegisterUser(c *gin.Context) {
 }
 
 /*
- * Gets the character whose ID value matches the id given.
+ * Gets the user whose username value matches the username given.
  */
 func GetUser(c *gin.Context) {
 	var user models.User
 
 	// Finds the user based on their unique username.
-	// Gives an error if no character with that username exists.
+	// Gives an error if no user with that username exists.
 	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"userId": user.ID, "email": user.Email, "username": user.Username})
+	c.JSON(http.StatusOK, gin.H{"userId": user.ID, "email": user.Email, "username": user.Username, "name": user.Name})
+}
+
+/*
+ * Update the user information.
+ */
+func UpdateUser(c *gin.Context) {
+	var user models.User
+	var updatedUser models.User
+
+	// Finds the user based on their unique username.
+	// Gives an error if no user with that username exists.
+	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
+		return
+	}
+
+	// Binds an input and maps it into updatedUser.
+	if err := c.ShouldBindJSON(&updatedUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+
+	databases.UserDB.Model(&user).Updates(updatedUser)
+	c.IndentedJSON(http.StatusOK, gin.H{"Message": "User Info Updated."})
 }
 
 /*
@@ -65,7 +91,7 @@ func DeleteUser(c *gin.Context) {
 	var user models.User
 
 	// Finds the user based on their unique username.
-	// Gives an error if no character with that username exists.
+	// Gives an error if no user with that username exists.
 	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})

@@ -72,6 +72,8 @@ func users(router *gin.Engine) {
 		users.GET("/:username", controllers.GetUser)
 		users.POST("/", controllers.RegisterUser)
 		users.POST("/token", controllers.GenerateToken)
+		users.PUT("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
+		users.PATCH("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
 		users.DELETE("/:username", controllers.DeleteUser).Use(middlewares.Authenthicate())
 	}
 }
