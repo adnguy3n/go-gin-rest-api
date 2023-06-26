@@ -77,7 +77,7 @@ The character's Unique ID is automatically generated and should not be provided 
 
 #### Updating a character
 
-The PATCH and PUT requests can be used to update a character. They require a JSON Body and for the character ID to be added to the request URL. The entire JSON does not need to be provided for PATCH requests, but does, including the unique ID, for PUT requests.
+The PATCH and PUT requests can be used to update a character. They require a JSON Body and for the character ID to be added to the request URL. The entire JSON does not need to be provided for PATCH requests, but does, including the unique ID, for PUT requests. Also, PATCH requests cannot change the ID, only PUT requests can.
 
 ![POSTMAN update character](https://github.com/adnguy3n/go-gin-rest-api/assets/32573771/7c3d182e-1dc8-4fd0-87a2-b3c776a6799a)
 
