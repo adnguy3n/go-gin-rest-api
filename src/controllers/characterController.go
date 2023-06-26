@@ -59,14 +59,14 @@ func PostCharacter(c *gin.Context) {
 
 	// Stores the new character's Name, Race, Class, and Level in character.
 	character := models.Character{
-		Name:  newCharacter.Name,
-		Race:  newCharacter.Race,
-		Class: newCharacter.Race,
-		Level: newCharacter.Level}
+		Name:  &newCharacter.Name,
+		Race:  &newCharacter.Race,
+		Class: &newCharacter.Race,
+		Level: &newCharacter.Level}
 
 	// The max level for D&D character is 20.
-	if character.Level > 20 || character.Level < 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level. Nor can a character be 0th level."})
+	if *character.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
 		return
 	}
 
@@ -115,8 +115,8 @@ func PatchCharacter(c *gin.Context) {
 	}
 
 	// The max level for D&D character is 20.
-	if updatedCharacter.Level > 20 || updatedCharacter.Level < 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level. Nor can a character be 0th level."})
+	if updatedCharacter.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
 		return
 	}
 
@@ -145,14 +145,15 @@ func PutCharacter(c *gin.Context) {
 		return
 	}
 
-	if updatedCharacter.ID == 0 || updatedCharacter.Name == "" || updatedCharacter.Race == "" || updatedCharacter.Class == "" || updatedCharacter.Level == 0 {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Put Requests should contain all fields."})
+	if updatedCharacter.ID == nil || updatedCharacter.Name == nil || updatedCharacter.Race == nil ||
+		updatedCharacter.Class == nil || updatedCharacter.Level == nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "PUT requests requires all fields to be filled."})
 		return
 	}
 
 	// The max level for D&D character is 20.
-	if updatedCharacter.Level > 20 || updatedCharacter.Level < 1 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level. Nor can a character be 0th level."})
+	if *updatedCharacter.Level > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
 		return
 	}
 
