@@ -69,8 +69,9 @@ func characters(router *gin.Engine) {
 func users(router *gin.Engine) {
 	users := router.Group("/users")
 	{
-		users.POST("/token", controllers.GenerateToken)
 		users.POST("/", controllers.RegisterUser)
+		users.POST("/token", controllers.GenerateToken)
+		users.DELETE("/delete/:username", controllers.DeleteUser).Use(middlewares.Authenthicate())
 	}
 }
 

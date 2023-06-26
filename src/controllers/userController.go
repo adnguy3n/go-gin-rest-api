@@ -40,3 +40,22 @@ func RegisterUser(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, gin.H{"userId": user.ID, "email": user.Email, "username": user.Username})
 }
+
+/*
+ * Delete User.
+ */
+func DeleteUser(c *gin.Context) {
+	var user models.User
+
+	// Finds the user based on their unique username.
+	// Gives an error if no character with that username exists.
+	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
+		return
+	}
+
+	//Hard Delete
+	databases.UserDB.Unscoped().Delete(&user)
+	c.JSON(http.StatusOK, gin.H{"Message": "User deleted."})
+}
