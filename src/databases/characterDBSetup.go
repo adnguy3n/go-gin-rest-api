@@ -16,8 +16,7 @@ var CharacterDB *gorm.DB
  * Connects to the Database or creates it if it doesn't exist.
  * Currently set to test.db which can be found in the database folder.
  */
-func ConnectDatabase() {
-
+func ConnectCharacterDatabase() {
 	database, err := gorm.Open(sqlite.Open("database/characters.db"), &gorm.Config{})
 
 	if err != nil {

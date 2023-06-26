@@ -12,7 +12,9 @@ import (
  */
 func startServer() {
 	router := gin.Default()
-	databases.ConnectDatabase()
+	databases.ConnectCharacterDatabase()
+	databases.ConnectUserDatabase("root:rootpassword@tcp(userdb:3306)/userdb?parseTime=true")
+	databases.MigrateUserDatabase()
 
 	// Methods for HomePage endpoints.
 	router.GET("/", controllers.HomePage)
