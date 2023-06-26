@@ -19,11 +19,6 @@ services:
     container_name: go-api # add a name for the container
     ports:
       - "8080:8080"
-    environment:
-      - WAIT_HOSTS=userdb:3307
-      - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
-      - WAIT_HOST_CONNECT_TIMEOUT=30
     volumes:
      - .:/usr/src/app
     command: air src/main.go -b 0.0.0.0
