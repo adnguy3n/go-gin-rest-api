@@ -28,6 +28,10 @@ func startServer() {
 	router.PATCH("/characters/:id", controllers.PatchCharacter)
 	router.PUT("/characters/:id", controllers.PutCharacter)
 
+	// Methods for Users.
+	router.POST("/users", controllers.RegisterUser)
+	//router.GET("/users", controllers.AllUsers)
+
 	// Methods for Item. Uses a slice.
 	router.GET("/items", controllers.AllItems)
 	router.GET("/items/:id", controllers.GetItem)

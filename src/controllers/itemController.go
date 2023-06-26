@@ -135,22 +135,3 @@ func PutItem(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
 }
-
-/*
- * HomePage endpoint. Prints out a message when hit.
- */
-func HomePage(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hi, this is home.",
-	})
-}
-
-/*
- * HomePage endpoint for POST. Only hits if a POST request is made instead of a GET request.
- * Written for learning purposes.
- */
-func HomePagePOST(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hi, this is POST home.",
-	})
-}

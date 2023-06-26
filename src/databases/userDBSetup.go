@@ -9,7 +9,7 @@ import (
 )
 
 // Defines the user database. Used to commmunicate with the database.
-var userDB *gorm.DB
+var UserDB *gorm.DB
 var dbError error
 
 /*
@@ -17,7 +17,7 @@ var dbError error
  * connect to the database using GORM.
  */
 func ConnectUserDatabase(connectionString string) {
-	userDB, dbError = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+	UserDB, dbError = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if dbError != nil {
 		log.Fatal(dbError)
 		panic("Cannot connect to database")
@@ -31,6 +31,6 @@ func ConnectUserDatabase(connectionString string) {
  * a new users table.
  */
 func MigrateUserDatabase() {
-	userDB.AutoMigrate(&models.User{})
+	UserDB.AutoMigrate(&models.User{})
 	log.Println("Database Migration Completed.")
 }
