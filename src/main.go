@@ -34,7 +34,7 @@ func initRouter() *gin.Engine {
 	// Router Groups
 	characters(router)
 	users(router)
-	items(router)
+	//items(router)
 
 	return router
 }
@@ -51,7 +51,7 @@ func characters(router *gin.Engine) {
 		characters.GET("/:id", controllers.GetCharacter)
 
 		// Requires JWT authenthication to create, update, or delete characters.
-		secured := characters.Group("/secured").Use(middlewares.Authenthicate())
+		secured := characters.Group("/").Use(middlewares.Authenthicate())
 		{
 			secured.POST("/", controllers.PostCharacter)
 			secured.DELETE("/:id", controllers.DeleteCharacter)
@@ -75,7 +75,6 @@ func users(router *gin.Engine) {
 
 		// Request JWT authenthication to update or delete characters.
 		// Not using another group for learning purposes.
-		users.PUT("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
 		users.PATCH("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
 		users.DELETE("/:username", controllers.DeleteUser).Use(middlewares.Authenthicate())
 	}
