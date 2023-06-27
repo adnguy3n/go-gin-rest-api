@@ -34,7 +34,6 @@ func initRouter() *gin.Engine {
 	// Router Groups
 	characters(router)
 	users(router)
-	//items(router)
 
 	return router
 }
@@ -77,23 +76,6 @@ func users(router *gin.Engine) {
 		// Not using another group for learning purposes.
 		users.PATCH("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
 		users.DELETE("/:username", controllers.DeleteUser).Use(middlewares.Authenthicate())
-	}
-}
-
-/*
- * Router Group for Items.
- * Uses a slice. Has no persistence.
- * Written for learning purposes.
- */
-func items(router *gin.Engine) {
-	items := router.Group("/items")
-	{
-		items.GET("/", controllers.AllItems)
-		items.GET("/:id", controllers.GetItem)
-		items.POST("/", controllers.PostItem)
-		items.DELETE("/:id", controllers.DeleteItem)
-		items.PATCH("/:id", controllers.PatchItem)
-		items.PUT("/:id", controllers.PutItem)
 	}
 }
 
