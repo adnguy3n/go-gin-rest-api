@@ -72,10 +72,12 @@ func users(router *gin.Engine) {
 		users.POST("/", controllers.RegisterUser)
 		users.POST("/token", controllers.GenerateToken)
 
-		// Request JWT authenthication to update or delete characters.
-		// Not using another group for learning purposes.
-		users.PATCH("/:username", controllers.UpdateUser).Use(middlewares.Authenthicate())
-		users.DELETE("/:username", controllers.DeleteUser).Use(middlewares.Authenthicate())
+		// Requires JWT authenthication to update or delete characters.
+		secured := users.Group("/").Use(middlewares.Authenthicate())
+		{
+			secured.PATCH("/:username", controllers.UpdateUser)
+			secured.DELETE("/:username", controllers.DeleteUser)
+		}
 	}
 }
 
