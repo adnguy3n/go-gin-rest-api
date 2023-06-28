@@ -10,10 +10,10 @@ RUN go install github.com/cosmtrek/air@latest
 COPY . .
 
 # Run go mod tidy to download any missing dependencies and remove unused dependencies.
-RUN go mod tidy
+#RUN go mod tidy
 
 # Expose port 8080 to the outside world.
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["air"]
+CMD ["air", "src/main.go -b 0.0.0.0:8080"]

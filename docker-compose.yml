@@ -21,9 +21,13 @@ services:
       - "8080:8080"
     volumes:
      - .:/usr/src/app
-    command: air src/main.go -b 0.0.0.0
+    command: air src/main.go -b 0.0.0.0:8080
     depends_on:
       - "userdb"
 
 volumes: # add volume to persist data.
   my-db:
+
+networks:
+  default:
+    name: go-rest-network
