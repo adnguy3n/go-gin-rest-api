@@ -70,7 +70,7 @@ func characters(router *gin.Engine) {
  */
 func users(router *gin.Engine) {
 	// Paths with this will take a username parameter.
-	const username = "/username"
+	const username = "/:username"
 
 	users := router.Group("/users")
 	{
