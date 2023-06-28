@@ -19,6 +19,16 @@ type inputCharacter struct {
 	Level uint8  `json:"level"`
 }
 
+// Constants for Error Messages
+const levelCap = "A character cannot go past 20th level."
+const charNotFound = "Character not found."
+const inputNotFound = "Input not found."
+const charDeleted = "Character Deleted."
+const putError = "PUT requests requires all fields to be filled."
+
+// Constants for GORM where queries
+const queryID = "id = ?"
+
 /*
  * All items endpoint. Returns a json response of all characters when hit.
  */
@@ -36,9 +46,9 @@ func GetCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where(queryID, c.Param("id")).First(&character).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": charNotFound})
 		return
 	}
 
@@ -66,7 +76,7 @@ func PostCharacter(c *gin.Context) {
 
 	// The max level for D&D character is 20.
 	if *character.Level > 20 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
+		c.JSON(http.StatusBadRequest, gin.H{"error": levelCap})
 		return
 	}
 
@@ -83,14 +93,14 @@ func DeleteCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where(queryID, c.Param("id")).First(&character).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": charNotFound})
 		return
 	}
 
 	databases.CharacterDB.Delete(&character)
-	c.JSON(http.StatusNotFound, gin.H{"Message": "Character deleted."})
+	c.JSON(http.StatusNotFound, gin.H{"Message": charDeleted})
 }
 
 /*
@@ -102,21 +112,21 @@ func PatchCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where(queryID, c.Param("id")).First(&character).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": charNotFound})
 		return
 	}
 
 	// Call BindJSON to bind the received JSON to updatedCharacter.
 	if err := c.BindJSON(&updatedCharacter); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": inputNotFound})
 		return
 	}
 
 	// The max level for D&D character is 20.
 	if updatedCharacter.Level > 20 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
+		c.JSON(http.StatusBadRequest, gin.H{"error": levelCap})
 		return
 	}
 
@@ -133,27 +143,27 @@ func PutCharacter(c *gin.Context) {
 
 	// Finds the character based on their unique ID.
 	// Gives an error if no character with that ID exists.
-	err := databases.CharacterDB.Where("id = ?", c.Param("id")).First(&character).Error
+	err := databases.CharacterDB.Where(queryID, c.Param("id")).First(&character).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Character not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": charNotFound})
 		return
 	}
 
 	// Call BindJSON to bind the received JSON to updatedCharacter.
 	if err := c.BindJSON(&updatedCharacter); err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "input not found"})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": inputNotFound})
 		return
 	}
 
 	if updatedCharacter.ID == nil || updatedCharacter.Name == nil || updatedCharacter.Race == nil ||
 		updatedCharacter.Class == nil || updatedCharacter.Level == nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "PUT requests requires all fields to be filled."})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": putError})
 		return
 	}
 
 	// The max level for D&D character is 20.
 	if *updatedCharacter.Level > 20 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "A character cannot go past 20th level."})
+		c.JSON(http.StatusBadRequest, gin.H{"error": charNotFound})
 		return
 	}
 

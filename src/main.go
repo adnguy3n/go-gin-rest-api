@@ -44,18 +44,21 @@ func initRouter() *gin.Engine {
  * Create, Edit, and Delete D&D Characters in database.
  */
 func characters(router *gin.Engine) {
+	// Paths with this will take an id parameter.
+	const id = "/:id"
+
 	characters := router.Group("/characters")
 	{
 		characters.GET("/", controllers.AllCharacters)
-		characters.GET("/:id", controllers.GetCharacter)
+		characters.GET(id, controllers.GetCharacter)
 
 		// Requires JWT authenthication to create, update, or delete characters.
 		secured := characters.Group("/").Use(middlewares.Authenthicate())
 		{
 			secured.POST("/", controllers.PostCharacter)
-			secured.DELETE("/:id", controllers.DeleteCharacter)
-			secured.PATCH("/:id", controllers.PatchCharacter)
-			secured.PUT("/:id", controllers.PutCharacter)
+			secured.DELETE(id, controllers.DeleteCharacter)
+			secured.PATCH(id, controllers.PatchCharacter)
+			secured.PUT(id, controllers.PutCharacter)
 		}
 	}
 }
@@ -66,17 +69,20 @@ func characters(router *gin.Engine) {
  * Register users and generate tokens.
  */
 func users(router *gin.Engine) {
+	// Paths with this will take a username parameter.
+	const username = "/username"
+
 	users := router.Group("/users")
 	{
-		users.GET("/:username", controllers.GetUser)
+		users.GET(username, controllers.GetUser)
 		users.POST("/", controllers.RegisterUser)
 		users.POST("/token", controllers.GenerateToken)
 
 		// Requires JWT authenthication to update or delete characters.
 		secured := users.Group("/").Use(middlewares.Authenthicate())
 		{
-			secured.PATCH("/:username", controllers.UpdateUser)
-			secured.DELETE("/:username", controllers.DeleteUser)
+			secured.PATCH(username, controllers.UpdateUser)
+			secured.DELETE(username, controllers.DeleteUser)
 		}
 	}
 }

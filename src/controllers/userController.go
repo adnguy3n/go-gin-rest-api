@@ -8,6 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Constant for messages.
+const userNotFound = "Username not found."
+const userUpdated = "User Info Updated."
+const userDeleted = "User Deleted."
+
+// Constant for GORM Where queries
+const queryUsername = "username = ?"
+
 /*
  * Register User.
  */
@@ -49,9 +57,9 @@ func GetUser(c *gin.Context) {
 
 	// Finds the user based on their unique username.
 	// Gives an error if no user with that username exists.
-	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
+	err := databases.UserDB.Where(queryUsername, c.Param("username")).First(&user).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": userNotFound})
 		return
 	}
 
@@ -67,9 +75,9 @@ func UpdateUser(c *gin.Context) {
 
 	// Finds the user based on their unique username.
 	// Gives an error if no user with that username exists.
-	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
+	err := databases.UserDB.Where(queryUsername, c.Param("username")).First(&user).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": userNotFound})
 		return
 	}
 
@@ -88,7 +96,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	databases.UserDB.Model(&user).Updates(updatedUser)
-	c.IndentedJSON(http.StatusOK, gin.H{"Message": "User Info Updated."})
+	c.IndentedJSON(http.StatusOK, gin.H{"Message": userUpdated})
 }
 
 /*
@@ -99,13 +107,13 @@ func DeleteUser(c *gin.Context) {
 
 	// Finds the user based on their unique username.
 	// Gives an error if no user with that username exists.
-	err := databases.UserDB.Where("username = ?", c.Param("username")).First(&user).Error
+	err := databases.UserDB.Where(queryUsername, c.Param("username")).First(&user).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Username not found."})
+		c.JSON(http.StatusNotFound, gin.H{"error": userNotFound})
 		return
 	}
 
 	//Hard Delete
 	databases.UserDB.Unscoped().Delete(&user)
-	c.JSON(http.StatusOK, gin.H{"Message": "User deleted."})
+	c.JSON(http.StatusOK, gin.H{"Message": userDeleted})
 }
